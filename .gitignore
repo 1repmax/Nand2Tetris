@@ -1,0 +1,8 @@
+tools/
+projects/*
+!projects/01/
+!projects/02/
+
+*.out
+*.cmp
+*.tst
