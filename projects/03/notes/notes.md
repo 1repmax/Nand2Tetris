@@ -24,3 +24,7 @@ feedback loops.
 
 _Clocked Data Flip-Flop_ moves one bit of information from time _t - 1_ to time _t_. Essentially it shifts the input signal
 by one time unit or clock cycle.
+
+* Single-bit register, which can also be called bit or binary cell, is designed to store a single bit of information
+over the time. Registers are implemented combining multiplexer with the DFF chip. DFF chips expose input as interface,
+but the chip itself internally is connected to the clock.
