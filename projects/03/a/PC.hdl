@@ -12,9 +12,16 @@
  */
 
 CHIP PC {
-    IN in[16],load,inc,reset;
+    IN in[16], load, inc, reset;
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+        Inc16 (in[0..15] = r0, out[0..15] = incremented); // Incrementer takes the binary number from the register and increments the value by 1
+
+        Mux16(a = r0, b = incremented, sel = inc, out = m1);    // Either get the value from the register or take the incremented value
+        Mux16(a = m1, b = in, sel = load, out = m2);            // Either take the incremented value or load a new value
+        Mux16(a = m2, b[0..15] = false, sel = reset, out = m3); // Either take the value from previous operation or reset all to 0 bits
+
+        Register (in[0..15] = m3, load = true, out[0..15] = out, out[0..15] = r0);  // The load = true specifies that we always want to load the value into the register
+                                                                                    // register output is fed to the counter logical calculation output and to the next increment operation
 }
