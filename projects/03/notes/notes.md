@@ -39,4 +39,5 @@ but the chip itself internally is connected to the clock.
   * We need _address_ input of 6 bits to control access to a memory of size 64
   * We need _address_ input of 9 bits to control access to a memory of size 512
 
+* Our implementation of _Register_ allows to save 16 bit wide binary numbers
 * RAM8 gate gives us memory with 8 memory cells, where each cell is 16 bits wide.
