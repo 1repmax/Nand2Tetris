@@ -2,7 +2,15 @@ tools/
 projects/*
 !projects/01/
 !projects/02/
+!projects/03/
 
 *.out
 *.cmp
 *.tst
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
