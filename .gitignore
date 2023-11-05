@@ -3,6 +3,7 @@ projects/*
 !projects/01/
 !projects/02/
 !projects/03/
+!projects/04/
 
 *.out
 *.cmp
