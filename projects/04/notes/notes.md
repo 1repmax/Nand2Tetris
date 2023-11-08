@@ -86,3 +86,66 @@ language features the means to _jump_ to selected locations in the program, both
 In assembly languages, locations in the program can also be given symbolic names, using some syntax for specifying labels.
   * _Unconditional jump commands_ like JMP specify only the address of a target location: `JMP beginWhile`
   * _Conditional jump commands_ like JNG must also specify a Boolean condition: `JNG R1,endWhile`
+
+* A-instructions or addressing instructions
+* C-instructions or control instructions
+
+### A-instruction
+* Symbolic syntax:  
+`@value`, where `value` is non-negative decimal constant or symbol referring to such constant
+* Binary syntax:  
+* `0value`, where 0 at the start indicates that it is an addressing instruction. It is sometimes called the operation code
+or op-code.
+
+### C-instruction
+* Symbolic syntax:  
+`dest = computation ; jump`
+* Binary syntax:  
+`1 1 1 a  c1 c2 c3 c4 c5 c6  d1 d2 d3  j1 j2 j3`, where:
+  * 1 at the start indicates op-code which is control instruction in this context
+  * next 2 bits are not used and by convention are set to 1
+  * the next 7 bits are computation bits
+  * next 3 bits are destination bits
+  * last 3 bits define jump bits
+
+* D register is used to store data values.
+* A register acts both as data and address register. So based on the instruction context, the contents of A register
+can be interpreted as data value, or an address in the RAM or instruction memory.
+* Looks like A stores the binary value, which is the address of where M register is pointing. For example if A = 4, then
+M points to the RAM cell with address 4. Then we can assign some input to the M using the following syntax `M = 6`
+* The `jump` field in the C-instruction tells what should be done next. There are 2 possibilities:
+  1. fetch the next instruction in the program (default mode)
+  2. fetch and execute an instruction located somewhere else in the program
+To jump we have to set A register to hold an address of the next instruction we want to jump to. Whether jump should
+be performed depends on the 3 `j` bits of the jump field and on the ALU output value. For example step by step explanation
+of this example:
+```
+@3    // Load 3 in the A(ddressing) register -> 0011
+D=M   // Since M(emory) register now points to the M[3], we fetch that value and load it into D(ata) register
+@5    // Load 5 in the A(ddressing) register -> 0101
+D=D-A // Subtract the value that is currently in A register from the value that is currently in D register and load the result into the D register
+@100  // Load the value of next instruction into the A register
+D;JEQ // Take the value from D register and perform comparison with 0. If the result evaluates to true, we jump and execute the instruction that is currently loaded in A register. If the value is false, we proceed with the next instruction in the program.
+@200  // Load the next instruction in the A register
+0;JMP
+```
+### Symbols
+Assembly commands can refer to memory locations (addresses) using either constants or symbols. Symbols are introduced
+into assembly programs in the following three ways:
+1. _Predefined symbols_: a special subset of RAM addresses can be referred to by any assembly program using the
+predefined symbols:
+   * _Virtual registers_: to simplify assembly programming, the symbols `R0` to `R15` are predefined to refer to RAM
+   addresses 0 to 15 (M[0..15])
+   * _Predefined pointers_: The symbols `SP`, `LCL`, `ARG`, `THIS` and `THAT` are predefined to refer to RAM addresses 0 to 4
+   respectively. Note that each of these memory locations has two labels. For example M[2] can be referred either using
+   `R2` or `ARG`.
+   * _I/O pointers_: the symbols `SCREEN` and `KBD` are predefined to refer to RAM addresses 16384(0x4000) and
+   24576(0x6000). These are the base addresses of the screen and keyboard memory maps. They are manipulated using
+   binary calculations.
+2. _Label symbols_: these are user-defined symbols, which server to label destinations of goto commands, are declared
+by the pseudo command "(Xxx)". This directive defines the symbol Xxx to refer to the instruction memory location holding
+the next command in the program. A label can be defined only once and be used anywhere in the assembly program, **even
+before the line in which it is defined**.
+3. _Variable symbols_: any user-defined symbol Xxx appearing in an assembly program that is not predefined and is not
+defined elsewhere using the "(Xxx)" command is treated as a variable, and is assigned a unique memory address by the
+assembler, starting at RAM address 16
